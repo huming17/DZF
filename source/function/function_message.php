@@ -4,7 +4,7 @@ if(!defined('IN_SYSTEM')) {
 	exit('Access Denied');
 }
 
-function dshowmessage($message, $url_forward = '', $values = array(), $extraparam = array(), $custom = 0) {
+function dshowmessage($message, $url_forward = '', $values = array(), $extraparam = array(), $custom = 0, $template_dir = '') {
 	global $_G, $show_message;
 	$_G['messageparam'] = func_get_args();
 	if(empty($_G['inhookscript']) && defined('CURMODULE')) {
@@ -38,7 +38,7 @@ function dshowmessage($message, $url_forward = '', $values = array(), $extrapara
 	if($custom) {
 		$alerttype = 'alert_info';
 		$show_message = $message;
-		include template('common/showmessage');
+		include template($template_dir.'common/showmessage');
 		dexit();
 	}
 
@@ -95,7 +95,7 @@ function dshowmessage($message, $url_forward = '', $values = array(), $extrapara
 
 	$timedefault = intval($param['refreshtime'] === null ? $_G['setting']['msgforward']['refreshtime'] : $param['refreshtime']);
 	if($param['timeout'] !== null) {
-		$refreshsecond = !empty($timedefault) ? $timedefault : 3;
+		$refreshsecond = !empty($timedefault) ? $timedefault : 1;
 		$refreshtime = $refreshsecond * 1000;
 	} else {
 		$refreshtime = $refreshsecond = 0;
@@ -112,9 +112,9 @@ function dshowmessage($message, $url_forward = '', $values = array(), $extrapara
 		dheader("location: ".str_replace('&amp;', '&', $url_forward));
 	}
 	if($param['location'] && !empty($_G['inajax'])) {
-		include template('common/header_ajax');
+		include template($template_dir.'common/header_ajax');
 		echo '<script type="text/javascript" reload="1">window.location.href=\''.str_replace("'", "\'", $url_forward).'\';</script>';
-		include template('common/footer_ajax');
+		include template($template_dir.'common/footer_ajax');
 		dexit();
 	}
 
@@ -209,7 +209,7 @@ function dshowmessage($message, $url_forward = '', $values = array(), $extrapara
 	}
 	$show_message .= $extra ? '<script type="text/javascript" reload="1">'.$extra.$st.'</script>' : '';
 	$show_message .= $param['extrajs'] ? $param['extrajs'] : '';
-	include template('common/showmessage');
+	include template($template_dir.'common/showmessage');
 
 	dexit();
 }
