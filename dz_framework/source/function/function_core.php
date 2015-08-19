@@ -1348,9 +1348,9 @@ function adshow($parameter) {
 	return $_G['setting']['pluginhooks'][$adfunc] === null ? $adcontent : $_G['setting']['pluginhooks'][$adfunc];
 }
 
-function showmessage($message, $url_forward = '', $values = array(), $extraparam = array(), $custom = 0) {
+function showmessage($message, $url_forward = '', $values = array(), $extraparam = array(), $custom = 0,$template_dir) {
 	require_once libfile('function/message');
-	return dshowmessage($message, $url_forward, $values, $extraparam, $custom);
+	return dshowmessage($message, $url_forward, $values, $extraparam, $custom,$template_dir);
 }
 
 function submitcheck($var, $allowget = 0, $seccodecheck = 0, $secqaacheck = 0) {
