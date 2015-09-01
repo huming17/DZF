@@ -503,7 +503,7 @@ function checktplrefresh($maintpl, $subtpl, $timecompare, $templateid, $cachefil
 
 function template($file, $templateid = 0, $tpldir = '', $gettplfile = 0, $primaltpl='') {
 	global $_G;
-
+    
 	static $_init_style = false;
 	if($_init_style === false) {
 		ext::app()->_init_style();
@@ -515,61 +515,21 @@ function template($file, $templateid = 0, $tpldir = '', $gettplfile = 0, $primal
 		list($templateid, $file, $clonefile) = explode(':', $file);
 		$oldfile = $file;
 		$file = empty($clonefile) ? $file : $file.'_'.$clonefile;
-		if($templateid == 'diy') {
-			$indiy = false;
-			$_G['style']['tpldirectory'] = $tpldir ? $tpldir : (defined('TPLDIR') ? TPLDIR : '');
-			$_G['style']['prefile'] = '';
-			$diypath = SITE_ROOT.'./data/diy/'.$_G['style']['tpldirectory'].'/'; //DIY模板文件目录
-			$preend = '_diy_preview';
-			$_GET['preview'] = !empty($_GET['preview']) ? $_GET['preview'] : '';
-			$curtplname = $oldfile;
-			$basescript = $_G['mod'] == 'viewthread' && !empty($_G['thread']) ? 'forum' : $_G['basescript'];
-			if(isset($_G['cache']['diytemplatename'.$basescript])) {
-				$diytemplatename = &$_G['cache']['diytemplatename'.$basescript];
-			} else {
-				if(!isset($_G['cache']['diytemplatename'])) {
-					loadcache('diytemplatename');
-				}
-				$diytemplatename = &$_G['cache']['diytemplatename'];
-			}
-			$tplsavemod = 0;
-			if(isset($diytemplatename[$file]) && file_exists($diypath.$file.'.htm') && ($tplsavemod = 1) || empty($_G['forum']['styleid']) && ($file = $primaltpl ? $primaltpl : $oldfile) && isset($diytemplatename[$file]) && file_exists($diypath.$file.'.htm')) {
-				$tpldir = 'data/diy/'.$_G['style']['tpldirectory'].'/';
-				!$gettplfile && $_G['style']['tplsavemod'] = $tplsavemod;
-				$curtplname = $file;
-				if(isset($_GET['diy']) && $_GET['diy'] == 'yes' || isset($_GET['diy']) && $_GET['preview'] == 'yes') { //DIY模式或预览模式下做以下判断
-					$flag = file_exists($diypath.$file.$preend.'.htm');
-					if($_GET['preview'] == 'yes') {
-						$file .= $flag ? $preend : '';
-					} else {
-						$_G['style']['prefile'] = $flag ? 1 : '';
-					}
-				}
-				$indiy = true;
-			} else {
-				$file = $primaltpl ? $primaltpl : $oldfile;
-			}
-			$tplrefresh = $_G['config']['output']['tplrefresh'];
-			if($indiy && ($tplrefresh ==1 || ($tplrefresh > 1 && !($_G['timestamp'] % $tplrefresh))) && filemtime($diypath.$file.'.htm') < filemtime(SITE_ROOT.$_G['style']['tpldirectory'].'/'.($primaltpl ? $primaltpl : $oldfile).'.htm')) {
-				if (!updatediytemplate($file, $_G['style']['tpldirectory'])) {
-					unlink($diypath.$file.'.htm');
-					$tpldir = '';
-				}
-			}
-
-			if (!$gettplfile && empty($_G['style']['tplfile'])) {
-				$_G['style']['tplfile'] = empty($clonefile) ? $curtplname : $oldfile.':'.$clonefile;
-			}
-
-			$_G['style']['prefile'] = !empty($_GET['preview']) && $_GET['preview'] == 'yes' ? '' : $_G['style']['prefile'];
-
-		} else {
-			$tpldir = './source/plugin/'.$templateid.'/template';
-		}
 	}
 
 	$file .= !empty($_G['inajax']) && ($file == 'common/header' || $file == 'common/footer') ? '_ajax' : '';
-	$tpldir = $tpldir ? $tpldir : (defined('TPLDIR') ? TPLDIR : '');
+    //DEBUG 判断加载前台还是后台模版
+    $is_admin_path = 'admin/';
+    $is_admin = strpos($_G['PHP_SELF'], $is_admin_path);
+    if(!$is_admin){
+        $tpldir = $tpldir ? $tpldir : (defined('TPLDIR') ? TPLDIR : '');
+        $is_admin_path = '';
+    }else{
+        $is_admin_str = ''; 
+        $tpldir = $tpldir ? $tpldir : (defined('ADMIN_TPLDIR') ? TPLDIR : '');
+        $tpldir = $is_admin_path.trim($tpldir,'./');
+    }
+    
 	$templateid = $templateid ? $templateid : (defined('TEMPLATEID') ? TEMPLATEID : '');
 	$filebak = $file;
 
@@ -578,7 +538,7 @@ function template($file, $templateid = 0, $tpldir = '', $gettplfile = 0, $primal
 	}
 
 	if(!$tpldir) {
-		$tpldir = './template/default';
+        $tpldir = $is_admin_path.'./template/default';
 	}
 	$tplfile = $tpldir.'/'.$file.'.htm';
 
@@ -596,7 +556,7 @@ function template($file, $templateid = 0, $tpldir = '', $gettplfile = 0, $primal
 		if(strpos($tpldir, 'plugin') && (file_exists(SITE_ROOT.$mobiletplfile) || file_exists(substr(SITE_ROOT.$mobiletplfile, 0, -4).'.php'))) {
 			$tplfile = $mobiletplfile;
 		} elseif(!file_exists(SITE_ROOT.TPLDIR.'/'.$mobiletplfile) && !file_exists(substr(SITE_ROOT.TPLDIR.'/'.$mobiletplfile, 0, -4).'.php')) {
-			$mobiletplfile = './template/default/'.$mobiletplfile;
+			$mobiletplfile = $is_admin_path.'./template/default/'.$mobiletplfile;
 			if(!file_exists(SITE_ROOT.$mobiletplfile) && !$_G['forcemobilemessage']) {
 				$tplfile = str_replace('mobile/', '', $tplfile);
 				$file = str_replace('mobile/', '', $file);
@@ -609,10 +569,9 @@ function template($file, $templateid = 0, $tpldir = '', $gettplfile = 0, $primal
 		}
 	}
 
-	$cachefile = './data/template/'.SITE_LANG.'_'.(defined('STYLEID') ? STYLEID.'_' : '_').$templateid.'_'.str_replace('/', '_', $file).'.tpl.php';
-	if($templateid != 1 && !file_exists(SITE_ROOT.$tplfile) && !file_exists(substr(SITE_ROOT.$tplfile, 0, -4).'.php')
-			&& !file_exists(SITE_ROOT.($tplfile = $tpldir.$filebak.'.htm'))) {
-		$tplfile = './template/default/'.$filebak.'.htm';
+	$cachefile = $is_admin_path.'./data/template/'.SITE_LANG.'_'.(defined('STYLEID') ? STYLEID.'_' : '_').$templateid.'_'.str_replace('/', '_', $file).'.tpl.php';
+	if($templateid != 1 && !file_exists(SITE_ROOT.$tplfile) && !file_exists(substr(SITE_ROOT.$tplfile, 0, -4).'.php') && !file_exists(SITE_ROOT.($tplfile = $tpldir.$filebak.'.htm'))) {
+		$tplfile = $is_admin_path.'./template/default/'.$filebak.'.htm';
 	}
 
 	if($gettplfile) {
@@ -787,8 +746,17 @@ function dimplode($array) {
 	}
 }
 
-function libfile($libname, $folder = '',$ext='') {
-	$libpath = '/source/'.$folder;
+function libfile($libname, $folder = '',$ext='',$is_admin='') {
+    /*
+    $is_admin_path = 'admin/'; 
+    $is_admin = strpos($_SERVER['PHP_SELF'], $is_admin_path);
+    if(!$is_admin){
+        $is_admin = '';
+    }else{
+        $is_admin = '/admin'; 
+    }
+    */
+	$libpath = $is_admin.'/source/'.$folder;
 	if(strstr($libname, '/')) {
 		list($pre, $name) = explode('/', $libname);
 		$path = "{$libpath}/{$pre}/{$pre}_{$name}";
@@ -1349,7 +1317,7 @@ function adshow($parameter) {
 }
 
 function showmessage($message, $url_forward = '', $values = array(), $extraparam = array(), $custom = 0,$template_dir) {
-	require_once libfile('function/message');
+    require_once libfile('function/message');
 	return dshowmessage($message, $url_forward, $values, $extraparam, $custom,$template_dir);
 }
 
@@ -1911,7 +1879,6 @@ function userappprompt() {
 		$ts = $_G['timestamp'];
 		$key = md5($sid.$ts.$_G['setting']['my_sitekey']);
 		$uchId = $_G['user_id'] ? $_G['user_id'] : 0;
-		echo '<script type="text/javascript" src="http://notice.uchome.manyou.com/notice/userNotice?sId='.$sid.'&ts='.$ts.'&key='.$key.'&uchId='.$uchId.'" charset="UTF-8"></script>';
 	}
 }
 
