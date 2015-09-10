@@ -1398,6 +1398,14 @@ function dmkdir($dir, $mode = 0777, $makeindex = TRUE){
 	return true;
 }
 
+function rmkdir($dir) { 
+   $files = array_diff(scandir($dir), array('.','..')); 
+    foreach ($files as $file) { 
+      (is_dir("$dir/$file")) ? rmkdir("$dir/$file") : unlink("$dir/$file"); 
+    } 
+    return rmdir($dir); 
+}
+
 function dreferer($default = '') {
 	global $_G;
 
