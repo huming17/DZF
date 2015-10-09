@@ -32,12 +32,12 @@ class helper_page {
 			$lang['next'] = '&rsaquo;&rsaquo;';
 		} else {
 			$shownum = $showkbd = FALSE;
-			$showpagejump = TRUE;
+			$showpagejump = FALSE;
 			if(defined('IN_MOBILE') && !defined('TPL_DEFAULT')) {
 				$lang['prev'] = lang('core', 'prevpage');
 				$lang['next'] = lang('core', 'nextpage');
 			} else {
-				$lang['prev'] = '&nbsp;&nbsp;';
+				$lang['prev'] = lang('core', 'prevpage');
 				$lang['next'] = lang('core', 'nextpage');
 			}
 			$lang['pageunit'] = lang('core', 'pageunit');
@@ -87,18 +87,18 @@ class helper_page {
 				}
 			}
 			$_G['page_next'] = $to;
-			$multipage = ($curpage - $offset > 1 && $pages > $page ? '<a href="'.$mpurl.$pagevar.'1'.$a_name.'" class="first"'.$ajaxtarget.'>1 '.$dot.'</a>' : '').
-			($curpage > 1 && !$simple ? '<a href="'.$mpurl.$pagevar.($curpage - 1).$a_name.'" class="prev"'.$ajaxtarget.'>'.$lang['prev'].'</a>' : '');
+			$multipage = ($curpage - $offset > 1 && $pages > $page ? '<li class="paginate_button " aria-controls="dynamic-table" tabindex="0"><a href="'.$mpurl.$pagevar.'1'.$a_name.'" class="first"'.$ajaxtarget.'>1 '.$dot.'</a></li>' : '').
+			($curpage > 1 && !$simple ? '<li class="paginate_button " aria-controls="dynamic-table" tabindex="0"><a href="'.$mpurl.$pagevar.($curpage - 1).$a_name.'" class="prev"'.$ajaxtarget.'>'.$lang['prev'].'</a></li>' : '');
 			for($i = $from; $i <= $to; $i++) {
-				$multipage .= $i == $curpage ? '<strong>'.$i.'</strong>' :
-				'<a href="'.$mpurl.$pagevar.$i.($ajaxtarget && $i == $pages && $autogoto ? '#' : $a_name).'"'.$ajaxtarget.'>'.$i.'</a>';
+				$multipage .= $i == $curpage ? '<li class="paginate_button active" aria-controls="dynamic-table" tabindex="0"><a href="#">'.$i.'</a></li>' :
+				'<li class="paginate_button" aria-controls="dynamic-table" tabindex="0"><a href="'.$mpurl.$pagevar.$i.($ajaxtarget && $i == $pages && $autogoto ? '#' : $a_name).'"'.$ajaxtarget.'>'.$i.'</a></li>';
 			}
-			$multipage .= ($to < $pages ? '<a href="'.$mpurl.$pagevar.$pages.$a_name.'" class="last"'.$ajaxtarget.'>'.$dot.' '.$realpages.'</a>' : '').
+			$multipage .= ($to < $pages ? '<li class="paginate_button " aria-controls="dynamic-table" tabindex="0"><a href="'.$mpurl.$pagevar.$pages.$a_name.'" class="last"'.$ajaxtarget.'>'.$dot.' '.$realpages.'</a></li>' : '').
 			($showpagejump && !$simple && !$ajaxtarget ? '<label><input type="text" name="custompage" class="px" size="2" title="'.$lang['pagejumptip'].'" value="'.$curpage.'" onkeydown="if(event.keyCode==13) {window.location=\''.$mpurl.$pagevar.'\'+this.value; doane(event);}" /><span title="'.$lang['total'].' '.$pages.' '.$lang['pageunit'].'"> / '.$pages.' '.$lang['pageunit'].'</span></label>' : '').
-			($curpage < $pages && !$simple ? '<a href="'.$mpurl.$pagevar.($curpage + 1).$a_name.'" class="nxt"'.$ajaxtarget.'>'.$lang['next'].'</a>' : '').
+			($curpage < $pages && !$simple ? '<li class="paginate_button " aria-controls="dynamic-table" tabindex="0"><a href="'.$mpurl.$pagevar.($curpage + 1).$a_name.'" class="nxt"'.$ajaxtarget.'>'.$lang['next'].'</a></li>' : '').
 			($showkbd && !$simple && $pages > $page && !$ajaxtarget ? '<kbd><input type="text" name="custompage" size="3" onkeydown="if(event.keyCode==13) {window.location=\''.$mpurl.$pagevar.'\'+this.value; doane(event);}" /></kbd>' : '');
 
-			$multipage = $multipage ? '<div class="pg">'.($shownum && !$simple ? '<em>&nbsp;'.$num.'&nbsp;</em>' : '').$multipage.'</div>' : '';
+			$multipage = $multipage ? ''.($shownum && !$simple ? '<em>&nbsp;'.$num.'&nbsp;</em>' : '').$multipage.'' : '';
 		}
 		$maxpage = $realpages;
 		return $multipage;
