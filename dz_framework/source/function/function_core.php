@@ -519,14 +519,14 @@ function template($file, $templateid = 0, $tpldir = '', $gettplfile = 0, $primal
 
 	$file .= !empty($_G['inajax']) && ($file == 'common/header' || $file == 'common/footer') ? '_ajax' : '';
     //DEBUG 判断加载前台还是后台模版
-    $is_admin_path = 'admin/';
+    $is_admin_path = $_G['config']['admin_folder'].'/';
     $is_admin = strpos($_G['PHP_SELF'], $is_admin_path);
     if(!$is_admin){
         $tpldir = $tpldir ? $tpldir : (defined('TPLDIR') ? TPLDIR : '');
         $is_admin_path = '';
     }else{
         $is_admin_str = ''; 
-        $tpldir = $tpldir ? $tpldir : (defined('ADMIN_TPLDIR') ? TPLDIR : '');
+        $tpldir = $tpldir ? $tpldir : (defined('ADMIN_TPLDIR') ? ADMIN_TPLDIR : '');
         $tpldir = $is_admin_path.trim($tpldir,'./');
     }
     
@@ -748,7 +748,7 @@ function dimplode($array) {
 
 function libfile($libname, $folder = '',$ext='',$is_admin='') {
     /*
-    $is_admin_path = 'admin/'; 
+    $is_admin_path = $_G['config']['admin_folder'].'/'; 
     $is_admin = strpos($_SERVER['PHP_SELF'], $is_admin_path);
     if(!$is_admin){
         $is_admin = '';
@@ -1548,18 +1548,6 @@ function setstatus($position, $value, $baseon = null) {
 	return $t & 0xFFFF;
 }
 
-function notification_add($touid, $type, $note, $notevars = array(), $system = 0) {
-	return helper_notification::notification_add($touid, $type, $note, $notevars, $system);
-}
-
-function manage_addnotify($type, $from_num = 0, $langvar = array()) {
-	helper_notification::manage_addnotify($type, $from_num, $langvar);
-}
-
-function sendpm($toid, $subject, $message, $fromid = '', $replypmid = 0, $isusername = 0, $type = 0) {
-	return helper_pm::sendpm($toid, $subject, $message, $fromid, $replypmid, $isusername, $type);
-}
-
 function g_icon($groupid, $return = 0) {
 	global $_G;
 	if(empty($_G['cache']['usergroups'][$groupid]['icon'])) {
@@ -1769,24 +1757,12 @@ function cknewuser($return=0) {
 	return $result;
 }
 
-function manyoulog($logtype, $uids, $action, $fid = '') {
-	helper_manyou::manyoulog($logtype, $uids, $action, $fid);
-}
-
 function useractionlog($uid, $action) {
 	return helper_log::useractionlog($uid, $action);
 }
 
 function getuseraction($var) {
 	return helper_log::getuseraction($var);
-}
-
-function getuserapp($panel = 0) {
-	return helper_manyou::getuserapp($panel);
-}
-
-function getmyappiconpath($appid, $iconstatus=0) {
-	return helper_manyou::getmyappiconpath($appid, $iconstatus);
 }
 
 function getexpiration() {
@@ -1860,10 +1836,6 @@ function getattachnewaid($uid = 0) {
 	return C::t('forum_attachment')->insert(array('tid' => 0, 'pid' => 0, 'uid' => $uid, 'tableid' => 127), true);
 }
 
-function get_seosetting($page, $data = array(), $defset = array()) {
-	return helper_seo::get_seosetting($page, $data, $defset);
-}
-
 function getimgthumbname($fileStr, $extend='.thumb.jpg', $holdOldExt=true) {
 	if(empty($fileStr)) {
 		return '';
@@ -1906,19 +1878,6 @@ function dintval($int, $allowarray = false) {
 		}
 	}
 	return $ret;
-}
-
-
-function makeSearchSignUrl() {
-	return getglobal('setting/my_search_data/status') ? helper_manyou::makeSearchSignUrl() : array();
-}
-
-function get_related_link($extent) {
-	return helper_seo::get_related_link($extent);
-}
-
-function parse_related_link($content, $extent) {
-	return helper_seo::parse_related_link($content, $extent);
 }
 
 function check_diy_perm($topic = array(), $flag = '') {
