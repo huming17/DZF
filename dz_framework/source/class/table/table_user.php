@@ -4,13 +4,13 @@ if(!defined('IN_SYSTEM')) {
 	exit('Access Denied');
 }
 
-class table_users extends core_table
+class table_user extends core_table
 {
 	public function __construct() {
 
-		$this->_table = 'users';
+		$this->_table = 'user';
 		$this->_pk    = 'user_id';
-		$this->_pre_cache_key = 'users_';
+		$this->_pre_cache_key = 'user_';
 	}
 
 	public function max_uid() {
