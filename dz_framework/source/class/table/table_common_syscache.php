@@ -76,13 +76,15 @@ class table_common_syscache extends core_table
 		return $data;
 	}
 
-	public function insert($cachename, $data) {
-
+	public function insert($cachename, $data, $setting_info='') {
 		parent::insert(array(
 			'cname' => $cachename,
+            'cname_description' => $setting_info['cname_description'],
 			'ctype' => is_array($data) ? 1 : 0,
 			'dateline' => TIMESTAMP,
 			'data' => is_array($data) ? serialize($data) : $data,
+            'create_dateline' => $setting_info['create_dateline'],
+            'modify_dateline' => TIMESTAMP
 		), false, true);
 
 		if($this->_allowmem && memory('get', $cachename) !== false) {
