@@ -719,8 +719,8 @@ function dnumber($number) {
 	return abs($number) > 10000 ? '<span title="'.$number.'">'.intval($number / 10000).lang('core', '10k').'</span>' : $number;
 }
 
-function savecache($cachename, $data) {
-	C::t('common_syscache')->insert($cachename, $data);
+function savecache($cachename, $data,$setting_info=array()) {
+	C::t('common_syscache')->insert($cachename, $data, $setting_info);
 }
 
 function save_syscache($cachename, $data) {
