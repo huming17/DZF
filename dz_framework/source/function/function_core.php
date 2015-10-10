@@ -63,7 +63,7 @@ function getgpc($k, $type='GP') {
 function getuserbyuid($uid, $fetch_archive = 0) {
 	static $users = array();
 	if(empty($users[$uid])) {
-		$users[$uid] = C::t('users')->fetch($uid);
+		$users[$uid] = C::t('user')->fetch($uid);
 	}
 	if(!isset($users[$uid]['self']) && $uid == getglobal('uid') && getglobal('uid')) {
 		$users[$uid]['self'] = 1;
