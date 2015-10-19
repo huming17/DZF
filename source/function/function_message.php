@@ -38,7 +38,7 @@ function dshowmessage($message, $url_forward = '', $values = array(), $extrapara
 	if($custom) {
 		$alerttype = 'alert_info';
 		$show_message = $message;
-		include template($template_dir.'common/showmessage');
+		include template($template_dir.'global/showmessage');
 		dexit();
 	}
 
@@ -112,9 +112,9 @@ function dshowmessage($message, $url_forward = '', $values = array(), $extrapara
 		dheader("location: ".str_replace('&amp;', '&', $url_forward));
 	}
 	if($param['location'] && !empty($_G['inajax'])) {
-		include template($template_dir.'common/header_ajax');
+		include template($template_dir.'global/header_ajax');
 		echo '<script type="text/javascript" reload="1">window.location.href=\''.str_replace("'", "\'", $url_forward).'\';</script>';
-		include template($template_dir.'common/footer_ajax');
+		include template($template_dir.'global/footer_ajax');
 		dexit();
 	}
 
@@ -209,7 +209,7 @@ function dshowmessage($message, $url_forward = '', $values = array(), $extrapara
 	}
 	$show_message .= $extra ? '<script type="text/javascript" reload="1">'.$extra.$st.'</script>' : '';
 	$show_message .= $param['extrajs'] ? $param['extrajs'] : '';
-	include template($template_dir.'common/showmessage');
+	include template($template_dir.'global/showmessage');
 
 	dexit();
 }

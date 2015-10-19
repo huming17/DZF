@@ -15,7 +15,7 @@ class template {
 
 	function parse_template($tplfile, $templateid, $tpldir, $file, $cachefile) {
 		$basefile = basename(SITE_ROOT.$tplfile, '.htm');
-		$file == 'common/header' && defined('CURMODULE') && CURMODULE && $file = 'common/header_'.CURMODULE;
+		$file == 'global/header' && defined('CURMODULE') && CURMODULE && $file = 'global/header_'.CURMODULE;
 		$this->file = $file;
 
 		if($fp = @fopen(SITE_ROOT.$tplfile, 'r')) {
