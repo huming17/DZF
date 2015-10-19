@@ -517,7 +517,7 @@ function template($file, $templateid = 0, $tpldir = '', $gettplfile = 0, $primal
 		$file = empty($clonefile) ? $file : $file.'_'.$clonefile;
 	}
 
-	$file .= !empty($_G['inajax']) && ($file == 'common/header' || $file == 'common/footer') ? '_ajax' : '';
+	$file .= !empty($_G['inajax']) && ($file == 'global/header' || $file == 'global/footer') ? '_ajax' : '';
     //DEBUG 判断加载前台还是后台模版
     $is_admin_path = $_G['config']['admin_folder'].'/';
     $is_admin = strpos($_G['PHP_SELF'], $is_admin_path);
@@ -542,7 +542,7 @@ function template($file, $templateid = 0, $tpldir = '', $gettplfile = 0, $primal
 	}
 	$tplfile = $tpldir.'/'.$file.'.htm';
 
-	$file == 'common/header' && defined('CURMODULE') && CURMODULE && $file = 'common/header_'.$_G['basescript'].'_'.CURMODULE;
+	$file == 'global/header' && defined('CURMODULE') && CURMODULE && $file = 'global/header_'.$_G['basescript'].'_'.CURMODULE;
 
 	if(defined('IN_MOBILE') && !defined('TPL_DEFAULT')) {
 		if(strpos($tpldir, 'plugin')) {
@@ -1556,7 +1556,7 @@ function g_icon($groupid, $return = 0) {
 		if(substr($_G['cache']['usergroups'][$groupid]['icon'], 0, 5) == 'http:') {
 			$s = '<img src="'.$_G['cache']['usergroups'][$groupid]['icon'].'" alt="" class="vm" />';
 		} else {
-			$s = '<img src="'.$_G['setting']['attachurl'].'common/'.$_G['cache']['usergroups'][$groupid]['icon'].'" alt="" class="vm" />';
+			$s = '<img src="'.$_G['setting']['attachurl'].'global/'.$_G['cache']['usergroups'][$groupid]['icon'].'" alt="" class="vm" />';
 		}
 	}
 	if($return) {
